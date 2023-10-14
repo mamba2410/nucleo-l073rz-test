@@ -1,0 +1,6 @@
+[submodule "modules/STM32CubeL0"]
+	path = modules/STM32CubeL0
+	url = https://github.com/STMicroelectronics/STM32CubeL0
+[submodule "modules/stm32-cmake"]
+	path = modules/stm32-cmake
+	url = https://github.com/ObKo/stm32-cmake
