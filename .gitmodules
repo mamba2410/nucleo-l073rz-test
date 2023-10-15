@@ -4,3 +4,6 @@
 [submodule "modules/stm32-cmake"]
 	path = modules/stm32-cmake
 	url = https://github.com/ObKo/stm32-cmake
+[submodule "modules/stlink"]
+	path = modules/stlink
+	url = https://github.com/stlink-org/stlink
