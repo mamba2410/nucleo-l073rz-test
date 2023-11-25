@@ -5,7 +5,7 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/modules/stm32-cmake/cmake/s
 
 
 project(stm32-blinky C ASM)
-set(MAIN_SOURCE_FILE src/screen.c)
+set(MAIN_SOURCE_FILE src/screen_ll.c)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 

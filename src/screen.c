@@ -39,8 +39,7 @@ HAL_StatusTypeDef spi2_init(SPI_HandleTypeDef *hspi) {
     hspi->Init.TIMode = SPI_TIMODE_DISABLE;
     hspi->Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
     hspi->Init.CRCPolynomial = 7;
-    hspi->Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-    hspi->Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
+    //hspi->Init.NSSPMode = SPI_NSS_PULSE_DISABLED;
 
     if( HAL_SPI_Init(hspi) != HAL_OK ) {
         ret = HAL_ERROR;
