@@ -5,12 +5,17 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/modules/stm32-cmake/cmake/s
 
 
 project(stm32-blinky C ASM)
-set(MAIN_SOURCE_FILE src/screen_ll.c)
+set(MAIN_SOURCE_FILE
+    src/screen.c
+    src/stm32l0xx_hal_msp.c
+    src/stm32l0xx_it.c
+    #src/system_stm32l0xx.c
+)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
 
-set(HAL_COMP_LIST RCC GPIO CORTEX STM32L0)
+set(HAL_COMP_LIST RCC GPIO CORTEX STM32L0 SPI)
 set(CMSIS_COMP_LIST STM32L0)
 
 find_package(CMSIS COMPONENTS "${CMSIS_COMP_LIST}" REQUIRED)
@@ -22,6 +27,7 @@ target_link_libraries(stm32-blinky-l0
     HAL::STM32::L0::RCC
     HAL::STM32::L0::GPIO
     HAL::STM32::L0::CORTEX
+    HAL::STM32::L0::SPI
     CMSIS::STM32::L073RZ
     STM32::NoSys
 )

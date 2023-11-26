@@ -42,6 +42,12 @@ From `stutil` root
 This opens a GDB server on port :4242
 
 
+OR with `openocd`
+
+```
+openocd -f board/st_nucleo_l073rz.cfg
+```
+
 From this project root, run
 
 ```
