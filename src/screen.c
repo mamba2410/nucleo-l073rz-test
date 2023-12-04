@@ -98,8 +98,30 @@ void screen_reset_sequence() {
 
 }
 
-void screen_draw_1wire(size_t len, uint8_t data[len]) {
+void screen_set_draw_area(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+    uint8_t params[4] = {0};
 
+    uint16_t xend = x+w-1;
+    uint16_t yend = y+h-1;
+
+    // x start and end, BE
+    params[0] = x>>8;
+    params[1] = x&0xff;
+    params[2] = xend>>8;
+    params[3] = xend&0xff;
+    screen_write_command(0x2a, 4, params); // set column start/end address
+
+    // y start and end, BE
+    params[0] = y>>8;
+    params[1] = y&0xff;
+    params[2] = yend>>8;
+    params[3] = yend&0xff;
+    screen_write_command(0x2b, 4, params); // set row start/end address
+
+    // Now draw with command 0x2c
+}
+
+void screen_draw_1wire(size_t len, uint8_t data[len]) {
     screen_write_cmd(0x2c, len, data);
 }
 
@@ -114,6 +136,8 @@ int main() {
         screen_line_buffer[i] = 0xff;
     }
 
+    // 8x8 square on top-left of screen
+    screen_set_draw_area(0, 0, 8, 8);
     screen_draw_1wire(64*3, screen_line_buffer);
 
 
