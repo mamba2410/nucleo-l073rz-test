@@ -6,6 +6,31 @@ Using the STM32CubeL0 HAL and a cmake build chain so you don't need the Cube IDE
 
 All of this is on linux.
 
+## Pinouts
+
+### Screen
+
+```
+VBAT -- 3.3V (supply)
+VCC -- 3.3V (supply)
+IOVCC -- 3.3V (supply)
+PWR_EN -- 3.3V
+SPI_CS -- PB1
+SPI_CLK -- PB13
+SIO0 -- PB14 (MISO)
+Q-SI1 -- PB15 (MOSI)
+Q_SI2 -- x
+Q_SI3 -- x
+RESET -- PB2
+TP_RESET -- 3.3V
+TP_SCL -- x
+TP_SDA -- x
+TP_INT -- x
+IM1 -- GND (SPI 3-wire)
+TE --x
+GND -- GND
+```
+
 ## Flashing and Debugging with st-link
 
 Holy moly this was annoying to figure out.

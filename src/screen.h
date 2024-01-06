@@ -20,6 +20,9 @@
 #define SCREEN_CSB_PORT                     GPIOB
 #define SCREEN_CSB_PIN                      GPIO_PIN_1
 
+#define SCREEN_RST_PORT                     GPIOB
+#define SCREEN_RST_PIN                      GPIO_PIN_2
+
 #define SCREEN_SPI                          SPI2
 #define SCREEN_SPI_CLK_ENABLE()             __HAL_RCC_SPI2_CLK_ENABLE()
 #define SCREEN_SPI_SCK_GPIO_CLK_ENABLE()    __HAL_RCC_GPIOB_CLK_ENABLE()

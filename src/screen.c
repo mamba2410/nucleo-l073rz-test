@@ -36,7 +36,7 @@ HAL_StatusTypeDef screen_spi_init() {
     SCREEN_SPI_HANDLE.Init.Direction = SPI_DIRECTION_1LINE;
     SCREEN_SPI_HANDLE.Init.DataSize = SPI_DATASIZE_8BIT;
     SCREEN_SPI_HANDLE.Init.CLKPolarity = SPI_POLARITY_HIGH;
-    SCREEN_SPI_HANDLE.Init.CLKPhase = SPI_PHASE_2EDGE;
+    SCREEN_SPI_HANDLE.Init.CLKPhase = SPI_PHASE_1EDGE;
     SCREEN_SPI_HANDLE.Init.NSS = SPI_NSS_SOFT;
     SCREEN_SPI_HANDLE.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
     SCREEN_SPI_HANDLE.Init.FirstBit = SPI_FIRSTBIT_MSB;
@@ -57,6 +57,9 @@ HAL_StatusTypeDef screen_spi_init() {
     GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
     HAL_GPIO_Init(SCREEN_CSB_PORT, &GPIO_InitStruct);
 
+    GPIO_InitStruct.Pin     = SCREEN_RST_PIN;
+    HAL_GPIO_Init(SCREEN_RST_PORT, &GPIO_InitStruct);
+
     return ret;
 }
 
@@ -73,6 +76,14 @@ void screen_write_cmd(uint8_t cmd, size_t len, uint8_t params[len]) {
 void screen_reset_sequence() {
     uint8_t params[4] = {0};
 
+    // reset screen to initialise
+    HAL_GPIO_WritePin(SCREEN_RST_PORT, SCREEN_RST_PIN, GPIO_PIN_RESET);
+    HAL_Delay(2); // ms
+    HAL_GPIO_WritePin(SCREEN_RST_PORT, SCREEN_RST_PIN, GPIO_PIN_SET);
+
+    // wait for reset finish
+    HAL_Delay(150); // max 150ms in sleep-out
+
     /*
      * Initialise screen
      * Adapted from `AMOLED_Init` function in `Display_Demo_Code` file
@@ -83,7 +94,7 @@ void screen_reset_sequence() {
     params[0] = 0x77;
     screen_write_cmd(0x3a, 1, params); // pixel format 24bpp (RGB888)
     params[0] = 0x20;
-    screen_write_cmd(0x53, 0, params); // "Write CTRL DIsplay1", brightness control on, display dimming off
+    screen_write_cmd(0x53, 1, params); // "Write CTRL DIsplay1", brightness control on, display dimming off
 
     HAL_Delay(10);
 
@@ -138,6 +149,7 @@ int main() {
 
     // 8x8 square on top-left of screen
     screen_set_draw_area(0, 0, 8, 8);
+    // not sending full data? Send in batches?
     screen_draw_1wire(64*3, screen_line_buffer);
 
 
