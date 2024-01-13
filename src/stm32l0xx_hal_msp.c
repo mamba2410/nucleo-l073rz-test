@@ -66,7 +66,7 @@ GPIO_InitTypeDef  GPIO_InitStruct;
     /* SPI SCK GPIO pin configuration  */
     GPIO_InitStruct.Pin       = SCREEN_SCK_PIN;
     GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull      = GPIO_PULLDOWN;
+    GPIO_InitStruct.Pull      = hspi->Init.CLKPolarity?GPIO_PULLUP:GPIO_PULLDOWN;
     GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = SCREEN_SCK_AF;
     HAL_GPIO_Init(SCREEN_SCK_PORT, &GPIO_InitStruct);
