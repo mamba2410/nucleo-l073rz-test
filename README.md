@@ -11,24 +11,24 @@ All of this is on linux.
 ### Screen
 
 ```
-VBAT -- 3.3V (supply)
-VCC -- 3.3V (supply)
-IOVCC -- 3.3V (supply)
-PWR_EN -- 3.3V
-SPI_CS -- PB1
-SPI_CLK -- PB13
-SIO0 -- PB14 (MISO)
-Q-SI1 -- PB15 (MOSI)
-Q_SI2 -- x
-Q_SI3 -- x
-RESET -- PB2
+VBAT ------ 3.3V (supply)
+VCC ------- 3.3V (supply)
+IOVCC ----- 3.3V (supply)
+PWR_EN ---- 3.3V
+SPI_CS ---- PB1
+SPI_CLK --- PB13
+SIO0 ------ PB15 (MOSI)
+Q-SI1 ----- PB14 (MISO)
+Q_SI2 ----- x
+Q_SI3 ----- x
+RESET ----- PB2
 TP_RESET -- 3.3V
-TP_SCL -- x
-TP_SDA -- x
-TP_INT -- x
-IM1 -- GND (SPI 3-wire)
-TE --x
-GND -- GND
+TP_SCL ---- x
+TP_SDA ---- x
+TP_INT ---- x
+IM1 ------- GND (SPI 3-wire)
+TE -------- x
+GND ------- GND
 ```
 
 ## Flashing and Debugging with st-link
@@ -66,7 +66,6 @@ From `stutil` root
 
 This opens a GDB server on port :4242
 
-
 OR with `openocd`
 
 ```
@@ -89,10 +88,19 @@ Now in GDB
 It *should* load the elf file.
 Can then run normal gdb commands from there.
 
-### Notes on flashing/debugging
+## Notes
 
-openocd doesn't seem to work well as a gdb server.
-I get multiple different errors trying to flash the program.
+### Screen
+
+Notes on IM1:
+Datasheet says SPI 3-wire operation needs IM1=0.
+However, when I set IM1=0, I do not get any response from the device.
+With the exact same code (just normal SPI) with IM1=1, I can send cmd 0x23
+to set all pixels on.
+However, it seems pretty sensitive to the cables, cause the screen
+flickers a lot.
+
+### Flashing/debugging
 
 Tried connecting with USB and running
 
@@ -106,8 +114,5 @@ Or connecting via swd (remove jumpers on `CN2`, SWDIO on pin 4 (from the top) an
 openocd -f ./ft2232h.cfg -f target/stm32l0.cfg
 ```
 
-Neither work, i get access denied and stuff like that.
-Suuuuper fun, and googling it seems to be inconclusive, just people saying the bug has now been fixed,
-but clearly it hasn't.
-Or it's a skill issue on my end.
+The first one with stlink seems to work for me now and I have no idea why.
 

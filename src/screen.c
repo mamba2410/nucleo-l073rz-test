@@ -27,22 +27,28 @@ uint8_t screen_line_buffer[SCREEN_WIDTH*SCREEN_SCALE*BYTES_PER_PIXEL];
  */
 
 
+/*
+ * According to diagram, data sampled on rising edge, clock idle high
+ * therefore SPI mode 3
+ */
 HAL_StatusTypeDef screen_spi_init() {
 
     HAL_StatusTypeDef ret = HAL_OK;
 
-    SCREEN_SPI_HANDLE.Instance = SCREEN_SPI;
-    SCREEN_SPI_HANDLE.Init.Mode = SPI_MODE_MASTER;
-    SCREEN_SPI_HANDLE.Init.Direction = SPI_DIRECTION_1LINE;
-    SCREEN_SPI_HANDLE.Init.DataSize = SPI_DATASIZE_8BIT;
-    SCREEN_SPI_HANDLE.Init.CLKPolarity = SPI_POLARITY_HIGH;
-    SCREEN_SPI_HANDLE.Init.CLKPhase = SPI_PHASE_1EDGE;
-    SCREEN_SPI_HANDLE.Init.NSS = SPI_NSS_SOFT;
-    SCREEN_SPI_HANDLE.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
-    SCREEN_SPI_HANDLE.Init.FirstBit = SPI_FIRSTBIT_MSB;
-    SCREEN_SPI_HANDLE.Init.TIMode = SPI_TIMODE_DISABLE;
-    SCREEN_SPI_HANDLE.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-    SCREEN_SPI_HANDLE.Init.CRCPolynomial = 7;
+    SCREEN_SPI_HANDLE.Instance                  = SCREEN_SPI;
+    SCREEN_SPI_HANDLE.Init.Mode                 = SPI_MODE_MASTER;
+    SCREEN_SPI_HANDLE.Init.Direction            = SPI_DIRECTION_2LINES;
+    SCREEN_SPI_HANDLE.Init.DataSize             = SPI_DATASIZE_8BIT;
+    SCREEN_SPI_HANDLE.Init.CLKPolarity          = SPI_POLARITY_HIGH; // CPOL=1
+    //SCREEN_SPI_HANDLE.Init.CLKPolarity          = SPI_POLARITY_LOW; // CPOL=0
+    SCREEN_SPI_HANDLE.Init.CLKPhase             = SPI_PHASE_2EDGE; // CPHA=1
+    //SCREEN_SPI_HANDLE.Init.CLKPhase             = SPI_PHASE_1EDGE; // CPHA=0, rising edge
+    SCREEN_SPI_HANDLE.Init.NSS                  = SPI_NSS_SOFT;
+    SCREEN_SPI_HANDLE.Init.BaudRatePrescaler    = SPI_BAUDRATEPRESCALER_128;
+    SCREEN_SPI_HANDLE.Init.FirstBit             = SPI_FIRSTBIT_MSB;
+    SCREEN_SPI_HANDLE.Init.TIMode               = SPI_TIMODE_DISABLE;
+    SCREEN_SPI_HANDLE.Init.CRCCalculation       = SPI_CRCCALCULATION_DISABLE;
+    SCREEN_SPI_HANDLE.Init.CRCPolynomial        = 7;
     //hspi->Init.NSSPMode = SPI_NSS_PULSE_DISABLED;
 
     if( HAL_SPI_Init(&SCREEN_SPI_HANDLE) != HAL_OK ) {
@@ -59,6 +65,7 @@ HAL_StatusTypeDef screen_spi_init() {
 
     GPIO_InitStruct.Pin     = SCREEN_RST_PIN;
     HAL_GPIO_Init(SCREEN_RST_PORT, &GPIO_InitStruct);
+
 
     return ret;
 }
@@ -107,6 +114,7 @@ void screen_reset_sequence() {
     params[0] = 0xff;
     screen_write_cmd(0x51, 1, params); // screen brightness
 
+    screen_write_cmd(0x23, 0, params); // all pixels on
 }
 
 void screen_set_draw_area(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
@@ -120,14 +128,14 @@ void screen_set_draw_area(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
     params[1] = x&0xff;
     params[2] = xend>>8;
     params[3] = xend&0xff;
-    screen_write_command(0x2a, 4, params); // set column start/end address
+    screen_write_cmd(0x2a, 4, params); // set column start/end address
 
     // y start and end, BE
     params[0] = y>>8;
     params[1] = y&0xff;
     params[2] = yend>>8;
     params[3] = yend&0xff;
-    screen_write_command(0x2b, 4, params); // set row start/end address
+    screen_write_cmd(0x2b, 4, params); // set row start/end address
 
     // Now draw with command 0x2c
 }
